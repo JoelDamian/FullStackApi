@@ -1,5 +1,13 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
+
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
 let persons = [
   {
@@ -51,6 +59,22 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter((person) => person.id !== id);
 
   response.status(204).end();
+});
+
+app.post('/api/persons', (request, response) => {
+  const body = request.body;
+  console.log(request);
+  let num = Math.random() * 1000;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: Math.round(num),
+  };
+
+  persons = persons.concat(person);
+
+  response.json(person);
 });
 
 const PORT = 3001;
