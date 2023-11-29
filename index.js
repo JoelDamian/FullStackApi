@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const app = express();
+const cors = require('cors');
+
+app.use(cors());
 
 morgan.token('req-body', (req) => {
   return JSON.stringify(req.body);
@@ -12,7 +15,7 @@ app.use(
     ':method :url :status :res[content-length] - :response-time ms :req-body'
   )
 );
-
+app.use(express.static('build'));
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
@@ -101,6 +104,19 @@ app.post('/api/persons', (request, response) => {
   persons = persons.concat(person);
 
   response.json(person);
+});
+
+app.put('/api/persons/:id', (req, response) => {
+  const resourceId = Number(req.params.id);
+  const body = req.body;
+
+  persons = persons.map((person) =>
+    person.id === resourceId ? { ...person, ...body } : person
+  );
+
+  const foundElement = persons.find((person) => person.id === resourceId);
+
+  response.json(foundElement);
 });
 
 const PORT = 3001;
