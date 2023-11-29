@@ -1,6 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
 const app = express();
+
+morgan(':method :url :status :res[content-length] - :response-time ms');
+
+app.use(morgan('tiny'));
 
 app.use(bodyParser.json());
 app.use(
@@ -66,17 +71,19 @@ app.post('/api/persons', (request, response) => {
   let num = Math.random() * 1000;
 
   if (!body.name) {
-    return response.status(400).json({ 
-      error: 'name is required' 
-    })
+    return response.status(400).json({
+      error: 'name is required',
+    });
   }
 
-  let foundIndex = persons.findIndex((person) => person.name.toLowerCase() === body.name.toLowerCase())
+  let foundIndex = persons.findIndex(
+    (person) => person.name.toLowerCase() === body.name.toLowerCase()
+  );
 
   if (foundIndex !== -1) {
-    return response.status(400).json({ 
-      error: 'name must be unique' 
-    })
+    return response.status(400).json({
+      error: 'name must be unique',
+    });
   }
 
   const person = {
